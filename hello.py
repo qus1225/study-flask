@@ -7,6 +7,7 @@ from flask_wtf import Form
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from flask_migrate import Migrate, MigrateCommand
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -23,6 +24,9 @@ db = SQLAlchemy(app)
 app.config['SECRET_KEY'] = 'hard to guess string'
 manager = Manager(app)
 bootstrap = Bootstrap(app)
+
+migrate = Migrate(app, db)
+manager.add_command('db', MigrateCommand)
 
 class Role(db.Model):
     __tablename__ = 'roles'
