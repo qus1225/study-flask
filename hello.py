@@ -1,7 +1,7 @@
 from flask import Flask, render_template, session, \
     redirect, url_for, flash
 import os
-from flask_script import Manager
+from flask_script import Manager, Shell
 from flask_bootstrap import Bootstrap
 from flask_wtf import Form
 from flask_sqlalchemy import SQLAlchemy
@@ -45,6 +45,10 @@ class User(db.Model):
 class NameForm(Form):
     name = StringField('What is your name?', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+def make_shell_context():
+    return dict(app=app, db=db, User=User, Role=Role)
+manager.add_command("shell", Shell(make_context=make_shell_context))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
