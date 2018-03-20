@@ -3,3 +3,4 @@ flask-bootstrap
 flask-wtf
 Flask-SQLAlchemy
 flask-migrate
+Flask-Mail
