@@ -1,5 +1,6 @@
 from flask import Flask, render_template, session, \
-    redirect, url_for, flash
+    redirect, url_for
+from threading import Thread
 import os
 from flask_script import Manager, Shell
 from flask_bootstrap import Bootstrap
@@ -40,6 +41,7 @@ manager.add_command('db', MigrateCommand)
 
 mail = Mail(app)
 
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -48,6 +50,7 @@ class Role(db.Model):
 
     def __repr__(self):
         return '<Role %r>' % self.name
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -58,21 +61,34 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+
 def send_email(to, subject, template, **kwargs):
     msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + subject,
                   sender=app.config['FLASKY_MAIL_SENDER'],
                   recipients=[to])
     msg.body = render_template(template + '.txt', **kwargs)
     msg.html = render_template(template + '.html', **kwargs)
-    mail.send(msg)
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+    return thr
+
 
 class NameForm(Form):
     name = StringField('What is your name?', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+
 def make_shell_context():
     return dict(app=app, db=db, User=User, Role=Role)
+
+
 manager.add_command("shell", Shell(make_context=make_shell_context))
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
