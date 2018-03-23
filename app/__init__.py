@@ -3,12 +3,10 @@ from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from config import config
-from moment import Moment
 
 
 bootstrap = Bootstrap()
 mail = Mail()
-moment = Moment()
 db = SQLAlchemy()
 
 
@@ -19,7 +17,6 @@ def create_app(config_name):
 
     bootstrap.init_app(app)
     mail.init_app(app)
-    moment.init_app(app)
     db.init_app(app)
 
     # To avoid circular dependency, Locate blueprint below

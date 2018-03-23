@@ -2,3 +2,6 @@
 venv/
 .env
 *.py[cod]
+
+# testing
+data-test.sqlite
