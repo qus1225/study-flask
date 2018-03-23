@@ -5,3 +5,4 @@ venv/
 
 # testing
 data-test.sqlite
+data-dev.sqlite
